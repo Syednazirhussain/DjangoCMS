@@ -9,7 +9,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth import authenticate, login as auth_login, logout
 
 from .filters import OrderFilters
-from .forms import OrderForm, UserCreateForm
+from .forms import OrderForm, UserCreateForm, CustomerForm
 from .decorators import unauthenticated_user, allowed_users, admin_only
 
 # Create your views here.
@@ -62,6 +62,22 @@ def login(request):
 def logoutUser(request):
 	logout(request)
 	return redirect('login')
+
+@login_required
+@allowed_users(allowed_roles=['admin', 'customer'])
+def accountSettings(request):
+
+	customer = request.user.customer
+	form = CustomerForm(instance=customer)
+	if request.method == 'POST':
+		form = CustomerForm(request.POST, request.FILES, instance=customer)
+		if form.is_valid():
+			form.save()
+			
+	context = {
+		'form': form
+	}
+	return render(request, 'account/account_setting.html', context)
 
 @login_required(login_url='login')
 @allowed_users(allowed_roles=['customer'])

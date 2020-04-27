@@ -29,6 +29,10 @@
         </a>
       </li>
     </ul>
+    {% else %}
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'account' %}">Setting</a>
+      </li>
     {% endif %}
   </div>
   <span class="hello-msg">Hello, {{ request.user }}</span>
